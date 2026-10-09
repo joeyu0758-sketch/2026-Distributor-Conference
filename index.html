@@ -542,7 +542,8 @@ body.editing .bar{right:min(440px,100vw)}
   {
    "n": "01",
    "en": "promotion",
-   "zh": "",
+   "zh": "行銷執行與規劃",
+   "hideZhTitle": true,
    "blocks": [
     {
      "sub": "01.1 · RedNote / WeChat",
@@ -712,7 +713,7 @@ function buildAppendix(){
       return has?`<button class="ag" data-go="t${i}">${inner}<span class="ag-go" aria-hidden="true">↓</span></button>`:`<div class="ag off">${inner}</div>`}).join('');
   const nextOf=i=>{for(let j=i+1;j<T.length;j++)if((T[j].blocks||[]).length)return j;return -1};
   host.innerHTML=T.map((t,i)=>!(t.blocks||[]).length?'':`<section class="topic" id="t${i}" aria-label="${esc((t.n||'')+' '+(t.en||'').replace(/\n/g,' '))}">
-    <header class="t-head"><p class="t-n">${esc(t.n)}</p><div class="t-title"><span class="mono">${esc(C.appendixLabel||'Appendix')} ${esc(t.n)} / ${String(T.length).padStart(2,'0')}</span><h2>${esc(t.en)}</h2>${t.zh?`<span class="t-zh">${esc(t.zh)}</span>`:''}</div></header>
+    <header class="t-head"><p class="t-n">${esc(t.n)}</p><div class="t-title"><span class="mono">${esc(C.appendixLabel||'Appendix')} ${esc(t.n)} / ${String(T.length).padStart(2,'0')}</span><h2>${esc(t.en)}</h2>${t.zh&&!t.hideZhTitle?`<span class="t-zh">${esc(t.zh)}</span>`:''}</div></header>
     ${(t.blocks||[]).map(b=>{const imgs=(b.imgs||[]).filter(x=>x&&x.img);const cols=b.cols||Math.min(Math.max(imgs.length,1),4);
       return `<div class="blk"><div class="blk-text">${b.sub?`<span class="mono">${esc(b.sub)}</span>`:''}${b.h?`<h3>${esc(b.h)}</h3>`:''}${b.p?`<p>${esc(b.p)}</p>`:''}${b.big?`<div class="blk-big">${esc(b.big)}${b.bigZh?`<small>${esc(b.bigZh)}</small>`:''}</div>`:''}</div>
       ${imgs.length?`<div class="blk-imgs${cols===1?' c1':''}" style="--cols:${cols}">${imgs.map(x=>`<figure class="fig${/maxxis/i.test(x.cap||'')?' mx':''}"><button data-zoom="${esc(x.cap||'')}" aria-label="Enlarge ${esc(x.cap||'image')}"><img src="${esc(src(x.img))}" alt="${esc(x.cap||b.h||'')}" decoding="async"></button>${x.cap?`<figcaption>${esc(x.cap)}</figcaption>`:''}</figure>`).join('')}</div>`
