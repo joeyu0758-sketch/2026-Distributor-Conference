@@ -537,6 +537,7 @@ body.editing .bar{right:min(440px,100vw)}
    }
   ]
  },
+ "archiveAfter": 1,
  "appendixLabel": "Appendix",
  "topics": [
   {
@@ -633,7 +634,7 @@ body.editing .bar{right:min(440px,100vw)}
     {
      "sub": "02.2 · Product Info",
      "h": "",
-     "p": "\n\n\n右邊欄位中，設計出 3 個購胎指南\n\n針對不同系列製作對應的購買指南\n\n以XC 系列為例，只販售旗艦膠料 MAXXSPEED\n再騎乘的路況去挑選",
+     "p": "\n右邊欄位中，設計出 3 個購胎指南\n\n針對不同系列製作對應的購買指南\n\n以XC 系列為例，只販售旗艦膠料 MAXXSPEED\n再依照騎乘的路況去挑選",
      "cols": 3,
      "imgs": [
       {
@@ -774,14 +775,16 @@ function buildAppendix(){
     T.map((t,i)=>{const has=(t.blocks||[]).length>0,inner=`<span class="ag-n">${esc(t.n)}</span><span class="ag-en">${esc(t.en)}</span><span class="ag-zh">${esc(t.zh)}</span>`;
       return has?`<button class="ag" data-go="t${i}">${inner}<span class="ag-go" aria-hidden="true">↓</span></button>`:`<div class="ag off">${inner}</div>`}).join('');
   const nextOf=i=>{for(let j=i+1;j<T.length;j++)if((T[j].blocks||[]).length)return j;return -1};
-  host.innerHTML=T.map((t,i)=>!(t.blocks||[]).length?'':`<section class="topic" id="t${i}" aria-label="${esc((t.n||'')+' '+(t.en||'').replace(/\n/g,' '))}">
+  const cut=Number.isInteger(C.archiveAfter)?C.archiveAfter:T.length,host2=document.getElementById('topics2');
+  const pages=T.map((t,i)=>!(t.blocks||[]).length?'':`<section class="topic" id="t${i}" aria-label="${esc((t.n||'')+' '+(t.en||'').replace(/\n/g,' '))}">
     <header class="t-head"><p class="t-n">${esc(t.n)}</p><div class="t-title"><span class="mono">${esc(C.appendixLabel||'Appendix')} ${esc(t.n)} / ${String(T.length).padStart(2,'0')}</span><h2>${esc(t.en)}</h2>${t.zh&&!t.hideZhTitle?`<span class="t-zh">${esc(t.zh)}</span>`:''}</div></header>
     ${(t.blocks||[]).map(b=>{const imgs=(b.imgs||[]).filter(x=>x&&x.img);const cols=b.cols||Math.min(Math.max(imgs.length,1),4);
       return `<div class="blk"><div class="blk-text">${b.sub?`<span class="mono">${esc(b.sub)}</span>`:''}${b.h?`<h3>${esc(b.h)}</h3>`:''}${b.p?`<p>${esc(b.p)}</p>`:''}${b.big?`<div class="blk-big">${esc(b.big)}${b.bigZh?`<small>${esc(b.bigZh)}</small>`:''}</div>`:''}</div>
       ${imgs.length?`<div class="blk-imgs${cols===1?' c1':''}" style="--cols:${cols}">${imgs.map(x=>`<figure class="fig${/maxxis/i.test(x.cap||'')?' mx':''}"><button data-zoom="${esc(x.cap||'')}" aria-label="Enlarge ${esc(x.cap||'image')}"><img src="${esc(src(x.img))}" alt="${esc(x.cap||b.h||'')}" decoding="async"></button>${x.cap?`<figcaption>${esc(x.cap)}</figcaption>`:''}</figure>`).join('')}</div>`
         :`<div class="ph-box"><strong>${esc(b.ph||'TBD')}</strong><span class="mono muted">${esc(b.phNote||'Content to come')}</span></div>`}</div>`}).join('')}
     <footer class="t-foot"><button data-go="wheel">↑ Back to agenda</button>${nextOf(i)>=0?`<button data-go="t${nextOf(i)}">Next · ${esc(T[nextOf(i)].n)} ${esc((T[nextOf(i)].en||'').split('\n')[0])} →</button>`:''}</footer>
-  </section>`).join('');
+  </section>`);
+  host.innerHTML=pages.slice(0,cut).join('');if(host2)host2.innerHTML=pages.slice(cut).join('');
 }
 document.addEventListener('click',e=>{
   const g=e.target.closest('[data-go]');
@@ -846,6 +849,7 @@ $('#app').innerHTML = `
     <div class="layer-stage" id="layerStage"></div>
   </div>
 </section>
+<div id="topics2"></div>
 <section id="rides" aria-label="Ride log">
   <div class="rides-head"><h2 data-b="rides.title"></h2><span class="mono muted tag" data-b="rides.tag"></span></div>
   <div class="deck" id="deck" tabindex="0" aria-label="Ride photos. Use left and right arrow keys to browse."></div>
